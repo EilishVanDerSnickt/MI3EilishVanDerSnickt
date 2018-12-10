@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph"
+            app:startDestination="@id/main_fragment">
+
+    <fragment android:id="@+id/main_fragment" android:name="com.example.eilishvds.boodschappenlijstje.main_fragment"
+              android:label="fragment_start" tools:layout="@layout/fragment_main_fragment">
+        <action android:id="@+id/action_main_fragment_to_home_fragment" app:destination="@+id/home_fragment"/>
+        <action android:id="@+id/action_main_fragment_to_password_fragment" app:destination="@+id/password_fragment"/>
+        <action android:id="@+id/action_main_fragment_to_registration_fragment" app:destination="@+id/registration_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/settings_fragment" android:name="com.example.eilishvds.boodschappenlijstje.settings_fragment"
+              android:label="fragment_settings" tools:layout="@layout/fragment_settings_fragment">
+        <action android:id="@+id/action_settings_fragment_to_changeEmail_fragment" app:destination="@+id/changeEmail_fragment"/>
+        <action android:id="@+id/action_settings_fragment_to_changePassword_fragment" app:destination="@+id/changePassword_fragment"/>
+        <action android:id="@+id/action_settings_fragment_to_main_fragment" app:destination="@+id/main_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/home_fragment" android:name="com.example.eilishvds.boodschappenlijstje.home_fragment"
+              android:label="fragment_home" tools:layout="@layout/fragment_home_fragment">
+        <action android:id="@+id/action_home_fragment_to_settings_fragment" app:destination="@+id/settings_fragment"/>
+        <action android:id="@+id/action_home_fragment_to_main_fragment" app:destination="@+id/main_fragment"/>
+        <action android:id="@+id/action_home_fragment_to_create_fragment" app:destination="@+id/create_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/changeEmail_fragment"
+              android:name="com.example.eilishvds.boodschappenlijstje.changeEmail_fragment"
+              android:label="fragment_change_email_fragment" tools:layout="@layout/fragment_change_email_fragment">
+        <action android:id="@+id/action_changeEmail_fragment_to_settings_fragment" app:destination="@+id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/changePassword_fragment"
+              android:name="com.example.eilishvds.boodschappenlijstje.changePassword_fragment"
+              android:label="fragment_change_password_fragment"
+              tools:layout="@layout/fragment_change_password_fragment">
+        <action android:id="@+id/action_changePassword_fragment_to_settings_fragment" app:destination="@+id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/password_fragment"
+              android:name="com.example.eilishvds.boodschappenlijstje.password_fragment"
+              android:label="fragment_password_fragment" tools:layout="@layout/fragment_password_fragment">
+        <action android:id="@+id/action_password_fragment_to_main_fragment" app:destination="@+id/main_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/registration_fragment"
+              android:name="com.example.eilishvds.boodschappenlijstje.registration_fragment"
+              android:label="fragment_registration_fragment" tools:layout="@layout/fragment_registration_fragment">
+        <action android:id="@+id/action_registration_fragment_to_main_fragment" app:destination="@+id/main_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/create_fragment" android:name="com.example.eilishvds.boodschappenlijstje.create_fragment"
+              android:label="fragment_create_fragment" tools:layout="@layout/fragment_create_fragment">
+        <action android:id="@+id/action_create_fragment_to_home_fragment" app:destination="@+id/home_fragment"/>
+    </fragment>
+
+</navigation>

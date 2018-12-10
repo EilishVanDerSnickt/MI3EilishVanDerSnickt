@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1087971000703",
+    "firebase_url": "https://project-776b0.firebaseio.com",
+    "project_id": "project-776b0",
+    "storage_bucket": "project-776b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087971000703:android:8af683c270692dd6",
+        "android_client_info": {
+          "package_name": "com.example.eilishvds.boodschappenlijstje"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1087971000703-agmkiqs48g4hje4spi13m8td1b238kt3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eilishvds.boodschappenlijstje",
+            "certificate_hash": "66b6814831851fca8c5b0e5653d96386ceffd022"
+          }
+        },
+        {
+          "client_id": "1087971000703-h6b788cbbt8hubiflh3ujg94ian48j89.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBVOpFA99xUJ8K7WK9eE69iYM6ewRKH6U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1087971000703-h6b788cbbt8hubiflh3ujg94ian48j89.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
