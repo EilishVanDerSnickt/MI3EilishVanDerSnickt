@@ -7,6 +7,7 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -32,6 +33,8 @@ import android.text.TextUtils
 import android.text.TextUtils.*
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
+import kotlinx.android.synthetic.main.fragment_change_email_fragment.*
+import kotlinx.android.synthetic.main.fragment_change_password_fragment.*
 import kotlinx.android.synthetic.main.fragment_main_fragment.*
 import kotlinx.android.synthetic.main.fragment_registration_fragment.*
 
@@ -63,13 +66,6 @@ class MainActivity : AppCompatActivity(),
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
         // [END initialize_auth]
-
-
-        //Registration error
-    val accountmanager = AccountManager()
-        accountmanager.register(
-            "helloi@email.com","test12345"
-        )
 
         onStart()
 
@@ -117,7 +113,7 @@ class MainActivity : AppCompatActivity(),
         when (item.itemId) {
             R.id.action_boodschappenlijstje -> { Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.home_fragment)}
             R.id.action_settings -> { Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.settings_fragment)}
-            R.id.action_logout -> {Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.main_fragment)}
+            R.id.action_logout -> {signOut(); Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.main_fragment)}
         }
         return true
     }
@@ -175,8 +171,8 @@ class MainActivity : AppCompatActivity(),
 
     //van het registreren naar loginscherm
     fun registreer(v: View) {
-        createAccount(registratie_emailadres.text.toString(), registratie_wachtwoord.text.toString());
-
+        createAccount(registratie_voornaam.text.toString(), registratie_emailadres.text.toString(), registratie_wachtwoord.text.toString(), registratie_wachtwoord2.text.toString(), text_licentievoorwaarden.isChecked);
+        sendEmailVerification()
         /**
         val action = registration_fragmentDirections.ActionRegistrationFragmentToMainFragment();
 
@@ -206,8 +202,20 @@ class MainActivity : AppCompatActivity(),
         v.findNavController().navigate(action)
     }
 
+    private fun VulHuidigeEmailIn() {
+
+        val user = auth.currentUser
+        val huidigEmail = user?.email
+        Toast.makeText(
+            baseContext, "email: $huidigEmail",
+            Toast.LENGTH_SHORT
+        ).show()
+        edit_emailWijzigen_huidigEmail.setText(huidigEmail)
+    }
+
     //account verwijderen
     fun AccountVerwijderen(v: View) {
+        deleteUser()
         signOut()
 
         val action = settings_fragmentDirections.ActionSettingsFragmentToMainFragment();
@@ -217,9 +225,12 @@ class MainActivity : AppCompatActivity(),
 
     //wachtwoord is gewijzigd
     fun wachtwoordIsGewijzigd(v: View) {
+        updatePassword(edit_wachtwoordWijzigen_nieuwWachtwoord.text.toString(), edit_wachtwoordWijzigen_nieuwWachtwoord2.text.toString())
+        /**
         val action = changePassword_fragmentDirections.ActionChangePasswordFragmentToSettingsFragment();
 
         v.findNavController().navigate(action)
+        */
     }
 
 
@@ -232,9 +243,13 @@ class MainActivity : AppCompatActivity(),
 
     //emailadres is gewijzigd
     fun emailIsGewijzigd(v: View) {
+        updateEmail(edit_emailWijzigen_nieuwEmail.toString())
+
+        /**
         val action = changeEmail_fragmentDirections.ActionChangeEmailFragmentToSettingsFragment();
 
         v.findNavController().navigate(action)
+        */
     }
 
     //emailadres wijzigen annuleren
@@ -267,7 +282,7 @@ class MainActivity : AppCompatActivity(),
     }
     // [END on_start_check_user]
 
-    private fun createAccount(email: String, password: String) {
+    private fun createAccount(naam: String, email: String, password: String, password2: String, licentievoorwaarden: Boolean) {
         Log.d(TAG, "createAccount:$email")
         if (!validateFormRegistratie()) {
             return
@@ -313,8 +328,6 @@ class MainActivity : AppCompatActivity(),
                     setSupportActionBar(toolbar)
 
                     fab.setOnClickListener { view ->
-
-
                         Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.create_fragment)
                     }
 
@@ -479,5 +492,112 @@ class MainActivity : AppCompatActivity(),
             val uid = user.uid
         }
         // [END get_user_profile]
+    }
+
+    private fun updateEmail(nieuw: String) {
+        // [START update_email]
+        val user = auth.currentUser
+
+        if (!validateFormUpdateEmail()) {
+            return
+        }
+
+        user?.updateEmail(nieuw)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User email address updated.")
+                    Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.settings_fragment)
+                }
+                else{
+                    Toast.makeText(
+                        baseContext, "Kan email niet updaten",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        // [END update_email]
+    }
+
+    private fun validateFormUpdateEmail(): Boolean {
+        var valid = true
+
+        val nieuw = edit_emailWijzigen_nieuwEmail.text.toString()
+        if (isEmpty(nieuw)) {
+            edit_emailWijzigen_nieuwEmail.error = "Verplicht."
+            valid = false
+        } else {
+            edit_emailWijzigen_nieuwEmail.error = null
+        }
+
+        return valid
+    }
+
+    private fun deleteUser() {
+        // [START delete_user]
+        val user = auth.currentUser
+
+        user?.delete()
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User account deleted.")
+                }
+            }
+        // [END delete_user]
+    }
+
+    private fun updatePassword(nieuw1: String, nieuw2: String) {
+        // [START update_password]
+        val user = auth.currentUser
+
+
+        if (!validateFormUpdatePassword()) {
+            return
+        }
+
+        val newPassword = nieuw1
+
+        user?.updatePassword(newPassword)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User password updated.")
+                    Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.settings_fragment)
+                }
+                else{
+                    Toast.makeText(
+                        baseContext, "Kan wachtwoord niet updaten",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        // [END update_password]
+    }
+
+    private fun validateFormUpdatePassword(): Boolean {
+        var valid = true
+
+        val nieuw1 = edit_wachtwoordWijzigen_nieuwWachtwoord.text.toString()
+        if (isEmpty(nieuw1)) {
+            edit_wachtwoordWijzigen_nieuwWachtwoord.error = "Verplicht."
+            valid = false
+        } else {
+            edit_wachtwoordWijzigen_nieuwWachtwoord.error = null
+        }
+
+        val nieuw2 = edit_wachtwoordWijzigen_nieuwWachtwoord2.text.toString()
+        if (isEmpty(nieuw2)) {
+            edit_wachtwoordWijzigen_nieuwWachtwoord2.error = "Verplicht."
+            valid = false
+        } else {
+            edit_wachtwoordWijzigen_nieuwWachtwoord2.error = null
+        }
+
+        if (nieuw1 != nieuw2){
+            edit_wachtwoordWijzigen_nieuwWachtwoord2.error = "De wachtwoorden moeten overeen komen."
+            valid = false
+        } else {
+            edit_wachtwoordWijzigen_nieuwWachtwoord2.error = null
+        }
+
+        return valid
     }
 }
