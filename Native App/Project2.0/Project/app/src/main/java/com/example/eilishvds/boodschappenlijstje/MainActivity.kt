@@ -157,9 +157,12 @@ class MainActivity : AppCompatActivity(),
 
     //van het wachtwoordvergeten naar loginscherm
     fun wachtwoordVergeten(v: View) {
+        sendPasswordReset(edit_wachtwoordVergeten_emailadres.toString())
+        /**
             val action = password_fragmentDirections.ActionPasswordFragmentToMainFragment();
 
             v.findNavController().navigate(action)
+            */
     }
 
     //wachtwoordvergeten annuleren
@@ -502,7 +505,9 @@ class MainActivity : AppCompatActivity(),
             return
         }
 
-        user?.updateEmail(nieuw)
+        val emailadres = nieuw
+
+        user?.updateEmail(emailadres)
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "User email address updated.")
@@ -596,6 +601,45 @@ class MainActivity : AppCompatActivity(),
             valid = false
         } else {
             edit_wachtwoordWijzigen_nieuwWachtwoord2.error = null
+        }
+
+        return valid
+    }
+
+    private fun sendPasswordReset(email: String) {
+        // [START send_password_reset]
+        val auth = FirebaseAuth.getInstance()
+        if (!validateFormResetPassword()) {
+            return
+        }
+
+        val emailAddress = email
+
+        auth.sendPasswordResetEmail(emailAddress)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Email sent.")
+                    Navigation.findNavController(findViewById(R.id.fragment)).navigate(R.id.main_fragment)
+                }
+                else{
+                    Toast.makeText(
+                        baseContext, "Kan email niet verzenden",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        // [END send_password_reset]
+    }
+
+    private fun validateFormResetPassword(): Boolean {
+        var valid = true
+
+        val email = edit_wachtwoordVergeten_emailadres.text.toString()
+        if (isEmpty(email)) {
+            edit_wachtwoordVergeten_emailadres.error = "Verplicht."
+            valid = false
+        } else {
+            edit_wachtwoordVergeten_emailadres.error = null
         }
 
         return valid
