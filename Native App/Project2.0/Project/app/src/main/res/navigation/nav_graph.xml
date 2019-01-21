@@ -23,6 +23,7 @@
         <action android:id="@+id/action_home_fragment_to_settings_fragment" app:destination="@+id/settings_fragment"/>
         <action android:id="@+id/action_home_fragment_to_main_fragment" app:destination="@+id/main_fragment"/>
         <action android:id="@+id/action_home_fragment_to_create_fragment" app:destination="@+id/create_fragment"/>
+        <action android:id="@+id/action_home_fragment_to_boodschappenlijstItems_fragment" app:destination="@+id/boodschappenlijstItems_fragment"/>
     </fragment>
 
     <fragment android:id="@+id/changeEmail_fragment"
@@ -53,6 +54,20 @@
     <fragment android:id="@+id/create_fragment" android:name="com.example.eilishvds.boodschappenlijstje.create_fragment"
               android:label="fragment_create_fragment" tools:layout="@layout/fragment_create_fragment">
         <action android:id="@+id/action_create_fragment_to_home_fragment" app:destination="@+id/home_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/boodschappenlijstItems_fragment"
+              android:name="com.example.eilishvds.boodschappenlijstje.boodschappenlijstItems_fragment"
+              android:label="fragment_boodschappenlijst_items_fragment"
+              tools:layout="@layout/fragment_boodschappenlijst_items_fragment">
+        <action android:id="@+id/action_boodschappenlijstItems_fragment_to_itemsToevoegen_fragment" app:destination="@+id/itemsToevoegen_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/itemsToevoegen_fragment"
+              android:name="com.example.eilishvds.boodschappenlijstje.itemsToevoegen_fragment"
+              android:label="fragment_items_toevoegen_fragment"
+              tools:layout="@layout/fragment_items_toevoegen_fragment">
+        <action android:id="@+id/action_itemsToevoegen_fragment_to_boodschappenlijstItems_fragment" app:destination="@+id/boodschappenlijstItems_fragment"/>
     </fragment>
 
 </navigation>

@@ -31,12 +31,17 @@ import android.util.Log
 import android.widget.Toast
 import android.text.TextUtils
 import android.text.TextUtils.*
+import android.widget.TextView
+import com.example.eilishvds.boodschappenlijstje.R.id.edit_Booschappenlijstje
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import kotlinx.android.synthetic.main.fragment_change_email_fragment.*
 import kotlinx.android.synthetic.main.fragment_change_password_fragment.*
+import kotlinx.android.synthetic.main.fragment_create_fragment.*
 import kotlinx.android.synthetic.main.fragment_main_fragment.*
 import kotlinx.android.synthetic.main.fragment_registration_fragment.*
+import kotlinx.android.synthetic.main.fragment_boodschappenlijst_items_fragment.*
+import kotlinx.android.synthetic.main.fragment_items_toevoegen_fragment.*
 
 class MainActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener,
@@ -47,7 +52,9 @@ class MainActivity : AppCompatActivity(),
     registration_fragment.OnFragmentInteractionListener,
     changeEmail_fragment.OnFragmentInteractionListener,
     changePassword_fragment.OnFragmentInteractionListener,
-    create_fragment.OnFragmentInteractionListener{
+    create_fragment.OnFragmentInteractionListener,
+    boodschappenlijstItems_fragment.OnFragmentInteractionListener,
+    itemsToevoegen_fragment.OnFragmentInteractionListener{
 
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
@@ -68,28 +75,6 @@ class MainActivity : AppCompatActivity(),
         // [END initialize_auth]
 
         onStart()
-
-
-        /**
-        val queue = newRequestQueue(this);
-        val url = "https://bramvandenabbeele.000webhostapp.com/mi3/project/api.php?";
-        */
-
-        /**
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
-        val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        nav_view.setNavigationItemSelectedListener(this)
-        */
-
     }
 
     override fun onBackPressed() {
@@ -158,11 +143,6 @@ class MainActivity : AppCompatActivity(),
     //van het wachtwoordvergeten naar loginscherm
     fun wachtwoordVergeten(v: View) {
         sendPasswordReset(edit_wachtwoordVergeten_emailadres.toString())
-        /**
-            val action = password_fragmentDirections.ActionPasswordFragmentToMainFragment();
-
-            v.findNavController().navigate(action)
-            */
     }
 
     //wachtwoordvergeten annuleren
@@ -175,12 +155,6 @@ class MainActivity : AppCompatActivity(),
     //van het registreren naar loginscherm
     fun registreer(v: View) {
         createAccount(registratie_voornaam.text.toString(), registratie_emailadres.text.toString(), registratie_wachtwoord.text.toString(), registratie_wachtwoord2.text.toString(), text_licentievoorwaarden.isChecked);
-        sendEmailVerification()
-        /**
-        val action = registration_fragmentDirections.ActionRegistrationFragmentToMainFragment();
-
-        v.findNavController().navigate(action)
-        */
     }
 
     //registreren annuleren
@@ -229,11 +203,6 @@ class MainActivity : AppCompatActivity(),
     //wachtwoord is gewijzigd
     fun wachtwoordIsGewijzigd(v: View) {
         updatePassword(edit_wachtwoordWijzigen_nieuwWachtwoord.text.toString(), edit_wachtwoordWijzigen_nieuwWachtwoord2.text.toString())
-        /**
-        val action = changePassword_fragmentDirections.ActionChangePasswordFragmentToSettingsFragment();
-
-        v.findNavController().navigate(action)
-        */
     }
 
 
@@ -247,12 +216,6 @@ class MainActivity : AppCompatActivity(),
     //emailadres is gewijzigd
     fun emailIsGewijzigd(v: View) {
         updateEmail(edit_emailWijzigen_nieuwEmail.toString())
-
-        /**
-        val action = changeEmail_fragmentDirections.ActionChangeEmailFragmentToSettingsFragment();
-
-        v.findNavController().navigate(action)
-        */
     }
 
     //emailadres wijzigen annuleren
@@ -271,7 +234,45 @@ class MainActivity : AppCompatActivity(),
 
     //toe voegen van een boodschappenlijstje
     fun voegBoodschappenlijstToe(v: View) {
+
         val action = create_fragmentDirections.ActionCreateFragmentToHomeFragment();
+
+        v.findNavController().navigate(action)
+
+
+        //edit_Booschappenlijstje.setText("test")
+
+    }
+
+    //ga naar boodschappenlijst items
+    fun bekijkItems(v: View){
+
+        val action = home_fragmentDirections.ActionHomeFragmentToBoodschappenlijstItemsFragment();
+
+        v.findNavController().navigate(action)
+
+    }
+
+    //naar items toevoegen navigeren
+    fun itemToevoegen(v: View) {
+
+        val action = boodschappenlijstItems_fragmentDirections.ActionBoodschappenlijstItemsFragmentToItemsToevoegenFragment();
+
+        v.findNavController().navigate(action)
+    }
+
+    //annulleer een item toevoegen
+    fun annuleerItem(v: View) {
+
+        val action = itemsToevoegen_fragmentDirections.ActionItemsToevoegenFragmentToBoodschappenlijstItemsFragment();
+
+        v.findNavController().navigate(action)
+    }
+
+    //een item toevoegen
+    fun voegItemToe(v: View) {
+
+        val action = itemsToevoegen_fragmentDirections.ActionItemsToevoegenFragmentToBoodschappenlijstItemsFragment();
 
         v.findNavController().navigate(action)
     }
@@ -299,12 +300,13 @@ class MainActivity : AppCompatActivity(),
                     Log.d(TAG, "createUserWithEmail:success")
                     val user = auth.currentUser
                     updateUI(user)
+                    sendEmailVerification()
                     Navigation.findNavController(findViewById(R.id.fragment)).navigate(R.id.main_fragment)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.d(TAG, "createUserWithEmail:failure", task.exception)
                     Toast.makeText(
-                        baseContext, "Authentication failed.",
+                        baseContext, "Inloggegevens niet geldig",
                         Toast.LENGTH_SHORT
                     ).show()
                     updateUI(null)
@@ -347,7 +349,7 @@ class MainActivity : AppCompatActivity(),
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed.",
+                    Toast.makeText(baseContext, "Inloggegevens niet geldig",
                         Toast.LENGTH_SHORT).show()
                     updateUI(null)
                 }
@@ -381,12 +383,12 @@ class MainActivity : AppCompatActivity(),
 
                 if (task.isSuccessful) {
                     Toast.makeText(baseContext,
-                        "Verification email sent to ${user.email} ",
+                        "Verificatie verzonden naar ${user.email} ",
                         Toast.LENGTH_SHORT).show()
                 } else {
                     Log.e(TAG, "sendEmailVerification", task.exception)
                     Toast.makeText(baseContext,
-                        "Failed to send verification email.",
+                        "Kan geen verificatie email verzenden",
                         Toast.LENGTH_SHORT).show()
                 }
                 // [END_EXCLUDE]
@@ -510,7 +512,7 @@ class MainActivity : AppCompatActivity(),
         user?.updateEmail(emailadres)
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "User email address updated.")
+                    Log.d(TAG, "Emailadres gewijzigd")
                     Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.settings_fragment)
                 }
                 else{
@@ -544,7 +546,7 @@ class MainActivity : AppCompatActivity(),
         user?.delete()
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "User account deleted.")
+                    Log.d(TAG, "Account verwijdert")
                 }
             }
         // [END delete_user]
@@ -564,7 +566,7 @@ class MainActivity : AppCompatActivity(),
         user?.updatePassword(newPassword)
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "User password updated.")
+                    Log.d(TAG, "Wachtwoord gewijzigd")
                     Navigation.findNavController(findViewById(R.id.fragment_boodschappenlijstje)).navigate(R.id.settings_fragment)
                 }
                 else{
@@ -618,7 +620,7 @@ class MainActivity : AppCompatActivity(),
         auth.sendPasswordResetEmail(emailAddress)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "Email sent.")
+                    Log.d(TAG, "Email verzonden")
                     Navigation.findNavController(findViewById(R.id.fragment)).navigate(R.id.main_fragment)
                 }
                 else{
@@ -643,5 +645,12 @@ class MainActivity : AppCompatActivity(),
         }
 
         return valid
+    }
+
+    //toevoegen van een boodschappenlijstje
+    private fun VoegToe(boodschappenlijst: String)
+    {
+        val textView = findViewById(R.id.txt_boodschappenlijstje) as TextView
+        textView.text = boodschappenlijst
     }
 }
